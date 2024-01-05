@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { User } from "../../users/User"
-import "./EmployeeList.css"
+import { User } from "../users/User"
+import "./Employees.css"
 import { getStaffUsers } from "../../services/userService"
+import { Link } from "react-router-dom"
 
 export const EmployeeList = () => {
     const [employees, setEmployees] = useState([])
@@ -13,7 +14,11 @@ export const EmployeeList = () => {
     return (
         <div className="employees">
             {employees.map((employeeObj) => {
-                return <User user={employeeObj} key={employeeObj.id} />
+                return (
+                    <Link to={`/employees/${employeeObj.id}`}>
+                        <User user={employeeObj} key={employeeObj.id} />
+                    </Link>
+                )
             })}
         </div>
     )
