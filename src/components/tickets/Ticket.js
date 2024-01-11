@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { getAllEmployees } from "../../services/employeeService"
-import { assignTicket, completeTicket } from "../../services/ticketService"
+import {
+    assignTicket,
+    updateTicket,
+    deleteTicket,
+} from "../../services/ticketService"
+import "./Tickets.css"
 
 export const Ticket = ({ ticket, currentUser, getAndSetTickets }) => {
     const [employees, setEmployees] = useState([])
@@ -45,14 +51,22 @@ export const Ticket = ({ ticket, currentUser, getAndSetTickets }) => {
         }
 
         // put to serviceTickets/{ticket.id}
-        completeTicket(updatedServiceTicket).then(() => {
+        updateTicket(updatedServiceTicket).then(() => {
+            getAndSetTickets()
+        })
+    }
+
+    const handleDelete = () => {
+        deleteTicket(ticket).then(() => {
             getAndSetTickets()
         })
     }
 
     return (
         <section className="ticket" key={ticket.id}>
-            <header className="ticket=info">#{ticket.id}</header>
+            <header className="ticket=info">
+                <Link to={`/tickets/edit/${ticket.id}`}>#{ticket.id}</Link>
+            </header>
             <div>{ticket.description}</div>
             <footer>
                 <div>
@@ -86,10 +100,16 @@ export const Ticket = ({ ticket, currentUser, getAndSetTickets }) => {
                     ) : (
                         ""
                     )}
+                    {!currentUser.isStaff && (
+                        <button
+                            className="btn btn-warning"
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </button>
+                    )}
                 </div>
             </footer>
         </section>
     )
 }
-
-// if current user is assigned to the ticket (assignedEmployee.user.id === currentUser.id) && the service ticket has not been completed (ticket.dateCompleted is empty) --> display Close button
